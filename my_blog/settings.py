@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'article',
+    'userprofile',
+    'password_reset',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +125,18 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+
+
+# SMTP服务器
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_HOST_USER = 'remarkablerain@126.com'
+EMAIL_HOST_PASSWORD = 'KDXTSZXYQCIBLCMY'
+EMAIL_PORT = 25
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'Django博客 <remarkablerain@126.com>'
+
+
+
+# 媒体文件地址
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

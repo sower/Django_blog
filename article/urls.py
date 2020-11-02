@@ -14,4 +14,5 @@ urlpatterns = [
         views.article_safe_delete,
         name='safe_delete'
     ),
+    path('update/<int:id>/', views.article_update, name='update'),
 ]
