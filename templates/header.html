@@ -6,13 +6,16 @@
         <a class="navbar-brand" href="#">我的博客</a>
 
         <!--导航栏入口-->
-    <div>
-        <ul class="navbar-nav">
-            <li class="nav-item">
+        <div>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'article:create' %}">写文章</a>
+                </li>
+                <li class="nav-item">
 
-                <a class="nav-link" href="{% url 'article:list' %}">文章</a>
+                    <a class="nav-link" href="{% url 'article:list' %}">文章</a>
 
-            </li>
-        </ul>
-    </div>
+                </li>
+            </ul>
+        </div>
 </nav>
