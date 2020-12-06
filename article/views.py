@@ -9,29 +9,34 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from comment.models import Comment
+from comment.forms import CommentForm
+
 
 
 def article_list(request):
     search = request.GET.get('search')
     order = request.GET.get('order')
+    column = request.GET.get('column')
+    tag = request.GET.get('tag')
+
+    article_list = ArticlePost.objects.all()
 
     if search:
-        if order == 'total_views':
-            article_list = ArticlePost.objects.filter(
-                Q(title__icontains=search) |
-                Q(body__icontains=search)
-            ).order_by('-total_views')
-        else:
-            article_list = ArticlePost.objects.filter(
-                Q(title__icontains=search) |
-                Q(body__icontains=search)
-            )
+        article_list = article_list.filter(
+            Q(title__icontains=search) |
+            Q(body__icontains=search)
+        )
     else:
         search = ''
-        if order == 'total_views':
-            article_list = ArticlePost.objects.all().order_by('-total_views')
-        else:
-            article_list = ArticlePost.objects.all()
+
+    if column and column.isdigit():
+        article_list = article_list.filter(column=column)
+
+    if tag and tag != 'None':
+        article_list = article_list.filter(tag__name__in=[tag])
+
+    if order == 'total_views':
+        article_list = article_list.order_by('-total_views')
 
     # 每页显示 3 篇文章
     paginator = Paginator(article_list, 3)
@@ -39,7 +44,13 @@ def article_list(request):
     articles = paginator.get_page(page)
 
     # 需要传递给模板的上下文
-    context = {'articles': articles, 'order': order, 'search': search}
+    context = {
+        'articles': articles,
+        'order': order,
+        'search': search,
+        'column': column,
+        'tag': tag,
+    }
     return render(request, 'article/list.html', context)
 
 
@@ -56,14 +67,21 @@ def article_detail(request, id):
                                        'markdown.extensions.toc', ])
     article.body = md.convert(article.body)
 
-    context = {'article': article, 'toc': md.toc, 'comments': comments}
+    comment_form = CommentForm()
+
+    context = {
+        'article': article,
+        'toc': md.toc,
+        'comments': comments,
+        'comment_form': comment_form,
+    }
     return render(request, 'article/detail.html', context)
 
 
 @login_required(login_url='/userprofile/login/')
 def article_create(request):
     if request.method == 'POST':
-        article_post_form = ArticlePostForm(data=request.POST)
+        article_post_form = ArticlePostForm(request.POST, request.FILES)
         if article_post_form.is_valid():
             new_article = article_post_form.save(commit=False)
             new_article.author = User.objects.get(id=request.user.id)
@@ -113,7 +131,7 @@ def article_update(request, id):
         return HttpResponse("抱歉，你无权修改这篇文章。")
 
     if request.method == 'POST':
-        article_post_form = ArticlePostForm(data=request.POST)
+        article_post_form = ArticlePostForm(request.POST, request.FILES)
         if article_post_form.is_valid():
             article.title = request.POST['title']
             article.body = request.POST['body']
@@ -122,6 +140,12 @@ def article_update(request, id):
                     id=request.POST['column'])
             else:
                 article.column = None
+
+            article.tags.set(*request.POST.get('tags').split(','), clear=True)
+
+            if request.FILES.get('avatar'):
+                article.avatar = request.FILES.get('avatar')
+
             article.save()
             return redirect('article:detail', id=id)
         else:
@@ -133,5 +157,6 @@ def article_update(request, id):
             'article': article,
             'article_post_form': article_post_form,
             'columns': columns,
+            'tags': ','.join([x for x in article.tags.names()]),
         }
         return render(request, 'article/update.html', context)

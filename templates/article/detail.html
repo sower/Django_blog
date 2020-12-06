@@ -10,6 +10,9 @@
 <!-- 写入 base.html 中定义的 content -->
 {% block content %}
 
+<script src="{% static 'ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'prism/prism.css' %}">
+
 <!-- 文章详情 -->
 <div class="container">
     <div class="row">
@@ -27,7 +30,7 @@
                     {% csrf_token %}
                     <button type="submit">发送</button>
                 </form>
-                · <a href="{% url "article:update" article.id %}">编辑文章</a>
+                · <a href='{% url "article:update" article.id %}'>编辑文章</a>
                 {% endif %}
 
             </div>
@@ -53,7 +56,15 @@
                                 我也要发言：
                             </strong>
                         </label>
-                        <textarea type="text" class="form-control" id="body" name="body" rows="2"></textarea>
+                        <!-- <textarea type="text"
+                                            class="form-control"
+                                            id="body"
+                                            name="body"
+                                            rows="2"></textarea>  -->
+                        <div>
+                            {{ comment_form.media }}
+                            {{ comment_form.body }}
+                        </div>
                     </div>
                     <!-- 提交按钮 -->
                     <button type="submit" class="btn btn-primary ">发送</button>
@@ -84,22 +95,37 @@
                     </span> 时说：
                 </p>
                 <pre style="font-family: inherit; font-size: 1em;">
-            {{ comment.body }}</pre>
+                {{comment.body|safe }}</pre>
                 {% endfor %}
             </div>
 
         </div>
 
-        <div class="col-3 mt-4">
-            <h4><strong>目录</strong></h4>
-            <hr>
-            <div>
-                {{ toc|safe }}
+        <div class="col-3 mt-4" id="sidebar" class="sidebar">
+            <div class="sidebar__inner">
+                <h4><strong>目录</strong></h4>
+                <hr>
+                <div>
+                    {{ toc|safe }}
+                </div>
             </div>
         </div>
 
     </div>
 </div>
+
+
+<style>
+    .sidebar {
+        will-change: min-height;
+    }
+
+    .sidebar__inner {
+        transform: translate(0, 0);
+        transform: translate3d(0, 0, 0);
+        will-change: position, transform;
+    }
+</style>
 
 <script>
 
@@ -117,3 +143,18 @@
 
 
 {% endblock content %}
+
+{% block script %}
+<!-- 引入粘性侧边栏 -->
+<script src="{% static 'sticky_sidebar/jquery.sticky-sidebar.min.js' %}"></script>
+<script type="text/javascript">
+    $('#sidebar').stickySidebar({
+        topSpacing: 20,
+        bottomSpacing: 20,
+    });
+</script>
+
+<script>
+    $(".django-ckeditor-widget").removeAttr('style');
+</script>
+{% endblock script %}

@@ -7,4 +7,4 @@ class ArticlePostForm(forms.ModelForm):
 
     class Meta:
         model = ArticlePost
-        fields = ('title', 'body', 'tags')
+        fields = ('title', 'body', 'tags', 'avatar')
