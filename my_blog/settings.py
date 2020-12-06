@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'comment',
     'taggit',
     'ckeditor',
+    'mptt',
+    'notifications',
+    'notice',
 ]
 
 MIDDLEWARE = [
