@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load my_filters_and_tags %}
 
 {% block title %}
 首页
@@ -117,7 +118,7 @@
                 </span>
                 <span>
                     <i class="fas fa-clock" style="color: pink;"></i>
-                    {{ article.created|date:'Y-m-d' }}
+                    {{ article.created|timesince_zh }}
                 </span>
             </p>
         </div>

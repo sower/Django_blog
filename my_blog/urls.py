@@ -18,6 +18,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 import notifications.urls
+from article.views import article_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +28,9 @@ urlpatterns = [
     path('comment/', include('comment.urls', namespace = 'comment')),
     path('inbox/notifications/', include(notifications.urls, namespace = 'notifications')),
     path('notice/', include('notice.urls', namespace = 'notice')),
+    path('accounts/', include('allauth.urls')),
 
+    path('', article_list, name='home'),
 ]
 
 

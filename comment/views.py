@@ -33,7 +33,7 @@ def post_comment(request, article_id, parent_comment_id=None):
                         action_object=new_comment
                     )
 
-                return HttpResponse('200 OK')
+                return JsonResponse({"code": "200 OK", "new_comment_id": new_comment.id})
 
 
             new_comment.save()
@@ -47,7 +47,8 @@ def post_comment(request, article_id, parent_comment_id=None):
                     action_object=new_comment,
                 )
 
-            return redirect(article)
+            redirect_url = article.get_absolute_url() + '#comment_elem_' + str(new_comment.id)
+            return redirect(redirect_url)
         else:
             return HttpResponse('内容错误，请重新填写')
     elif request.method == 'GET':

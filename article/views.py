@@ -33,7 +33,7 @@ def article_list(request):
         article_list = article_list.filter(column=column)
 
     if tag and tag != 'None':
-        article_list = article_list.filter(tag__name__in=[tag])
+        article_list = article_list.filter(tags__name__in=[tag])
 
     if order == 'total_views':
         article_list = article_list.order_by('-total_views')

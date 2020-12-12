@@ -92,7 +92,8 @@
                                     offset-1 col-11
                                     {% else %}
                                     col-12
-                                    {% endif %}">
+                                    {% endif %}"
+                    id="comment_elem_{{ comment.id }}>
                     <hr>
                     <p>
                         <strong style="color: pink">
@@ -233,5 +234,15 @@
 
         $(modal_id).modal('show');
     }
+</script>
+<script>
+    // 处理二级回复
+        function post_reply_and_show_it(new_comment_id) {
+            let next_url = "{% url 'article:detail' article.id %}";
+            // 去除 url 尾部 '/' 符号
+            next_url = next_url.charAt(next_url.length - 1) == '/' ? next_url.slice(0, -1) : next_url;
+            // 刷新并定位到锚点
+            window.location.replace(next_url + "#comment_elem_" + new_comment_id);
+        };
 </script>
 {% endblock script %}
