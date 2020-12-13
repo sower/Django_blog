@@ -10,7 +10,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from comment.models import Comment
 from comment.forms import CommentForm
-
+from django.views import View
 
 
 def article_list(request):
@@ -69,11 +69,26 @@ def article_detail(request, id):
 
     comment_form = CommentForm()
 
+    pre_article=ArticlePost.objects.filter(id__lt=article.id).order_by('-id')
+    next_article=ArticlePost.objects.filter(id__gt=article.id).order_by('id')
+
+    if pre_article.count() > 0:
+        pre_article = pre_article[0]
+    else:
+        pre_article = None
+
+    if next_article.count() > 0:
+        next_article = next_article[0]
+    else:
+        next_article = None
+
     context = {
         'article': article,
         'toc': md.toc,
         'comments': comments,
         'comment_form': comment_form,
+        'pre_article': pre_article,
+        'next_article': next_article,
     }
     return render(request, 'article/detail.html', context)
 
@@ -160,3 +175,11 @@ def article_update(request, id):
             'tags': ','.join([x for x in article.tags.names()]),
         }
         return render(request, 'article/update.html', context)
+
+
+class IncreaseLikesView(View):
+    def post(self, request, *args, **kwargs):
+        article=ArticlePost.objects.get(id=kwargs.get('id'))
+        article.likes+=1
+        article.save()
+        return HttpResponse('success')

@@ -25,7 +25,7 @@
         </ol>
     </nav>
 
-	<!-- 新增，搜索栏 -->
+	<!-- 搜索栏 -->
     <div class="row">
         <div class="col-auto mr-auto">
             <form class="form-inline" >
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <!-- 新增，搜索提示语 -->
+    <!-- 搜索提示语 -->
     {% if search %}
         {% if articles %}
             <h4><span style="color: red">"{{ search }}"</span>的搜索结果如下：</h4>
@@ -67,7 +67,8 @@
         <div class="col">
             <!-- 栏目 -->
             {% if article.column %}
-            <button type="button" class="btn btn-sm mb-2
+            <a role="button" href="{%url 'article:list' %}?column={{ article.column.id }}"
+            class="btn btn-sm mb-2
                             {% if article.column.title == 'Django' %}
                                 btn-success
                             {% elif article.column.title == 'Python' %}
@@ -77,7 +78,7 @@
                             {% endif %}
                         ">
                 {{ article.column }}
-            </button>
+        </a>
             {% endif %}
 
             <!-- 标签 -->

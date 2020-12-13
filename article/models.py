@@ -25,6 +25,7 @@ class ArticlePost(models.Model):
     updated = models.DateTimeField(auto_now=True)
     total_views = models.PositiveIntegerField(default=0)
     avatar = models.ImageField(upload_to='article/%Y%m%d/', blank=True)
+    likes = models.PositiveIntegerField(default=0)
     column = models.ForeignKey(
         ArticleColumn,
         null=True,
